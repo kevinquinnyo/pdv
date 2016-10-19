@@ -53,6 +53,10 @@ let s:regex["final"] = '\(final\)'
 
 " [:space:]*(private|protected|public|static|abstract)*[:space:]+[:identifier:]+\([:params:]\)
 let s:regex["function"] = '^\(\s*\)\([a-zA-Z ]*\)function\s\+\([^ (]\+\)\s*('
+
+" [:space:]*(private|protected|public|static|abstract)*[:space:]+[:identifier:]+\([:params:]\)
+let s:regex["test_function"] = '^\(\s*\)\([a-zA-Z ]*\)function\s\+\(test[^ (]\+\)\s*('
+
 " [:typehint:]*[:space:]*$[:identifier]\([:space:]*=[:space:]*[:value:]\)?
 let s:regex["param"] = ' *\([^ &]*\)\s*\(&\?\)\$\([^ =)]\+\)\s*\(=\s*\(.*\)\)\?$'
 
@@ -304,6 +308,17 @@ func! pdv#ParseFunctionData(line)
 	return l:data
 endfunc
 
+func! s:FormatFunctionName(name)
+    let l:name = a:name
+    let l:matches = matchlist(l:name, '^test\(.*\)')
+    let l:tname = get(l:matches, 1, )
+    if l:tname ==# "0"
+        return l:name
+    endif
+
+    return substitute(l:tname, '^.', tolower(l:tname[0]), '')
+endfunc
+
 func! s:ParseParameterData(text)
 	let l:data = {}
 
@@ -330,7 +345,7 @@ func! s:ParseBasicFunctionData(text)
 	let l:data["indent"] = l:matches[1]
 	let l:data["scope"] = s:GetScope(l:matches[2])
 	let l:data["static"] = s:GetStatic(l:matches[2])
-	let l:data["name"] = l:matches[3]
+	let l:data["name"] = s:FormatFunctionName(l:matches[3])
 
 	return l:data
 endfunc

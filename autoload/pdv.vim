@@ -90,6 +90,9 @@ let s:regex["types"]["bool"] = "\(true\|false\)"
 let s:regex["indent"] = '^\s*'
 
 let s:mapping = [
+    \ {"regex": s:regex["test_function"],
+    \  "function": function("pdv#ParseFunctionData"),
+    \  "template": "test_function"},
     \ {"regex": s:regex["function"],
     \  "function": function("pdv#ParseFunctionData"),
     \  "template": "function"},
